@@ -1,17 +1,44 @@
 /**
  * Background functions.
  * Robert Breetzmann (robert.breetzmann@gmail.com) 
+ * 
+ * TODO: Removing activeOptions on removing tabs/windows
  */
 
 var Http = new function() {
-    this.get = function( url, data, callback ) {
+    this.get = function( url, cookies, callback ) {
         var header = [{'key' : 'User-agent' , 'value' : 'Mozilla/4.0 (compatible)' }];
-          var request = {'header' : header, 
-              'url': url + '?' + data };
-          
-          chrome.extension.sendRequest( request, function( data ) {
-              callback( data );
-          } );
+        
+        var cookie = '';
+        for( var i=0;i<cookies.length;i++) {
+            cookie += cookies[i].name + "=" + cookies[i].value + ";";
+        }
+        
+        header.push( {'key' : 'Cookie' , 'value' : cookie } );
+        
+        var request = {'header' : header, 'url': url };
+      
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(data) {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 201 || xhr.status == 200) {
+                    if ( callback ) {
+                        callback(xhr.responseText);
+                    }
+                    return;
+                }
+
+                if (console) {
+                    console.info('Error:' + xhr.responseText);
+                }
+            }
+        }
+
+        xhr.open('GET', url, false);
+        for ( var i = 0; i < header.length; i++) {
+            xhr.setRequestHeader(header[i].key, header[i].value);
+        }
+        xhr.send();
     }
 }
 
@@ -40,35 +67,6 @@ var SessionLiveSaver = new function() {
             
         });
 
-        function call(request, sender, callback) {
-            var xhr = new XMLHttpRequest();
-            var header = request['header'];
-            var url = request['url'];
-            var data = request['data'];
-    
-            xhr.onreadystatechange = function(data) {
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 201 || xhr.status == 200) {
-                        callback(xhr.responseText);
-                        return;
-                    }
-    
-                    if (console) {
-                        console.info('Error:' + xhr.responseText);
-                    }
-                }
-            }
-    
-            xhr.open('POST', url, true);
-            for ( var i = 0; i < header.length; i++) {
-                xhr.setRequestHeader(header[i].key, header[i].value);
-            }
-            xhr.send(data);
-        };
-    
-        // Wire up the listener.
-        chrome.extension.onRequest.addListener(call);
-        
         run();
     }
     
@@ -76,7 +74,7 @@ var SessionLiveSaver = new function() {
         var newOption = getOption( option.trigger, activePings);
         
         if( !newOption) {
-            option.count = 0;
+            option.count = 1;
             activePings.push( option ); 
             if (console) {
                 console.info('Added option to queue: ' + option.trigger);
@@ -98,21 +96,29 @@ var SessionLiveSaver = new function() {
 
         return null;
     }
+    
+    var ping = function( option ) {
+        chrome.cookies.getAll({ url: option.ping }, function( cookies ) {
+            Http.get( option.ping, cookies );
+            if( console ) {
+                console.info( "Ping " + option.ping );
+                console.info( "Next ping in " + option.time + " minutes" );
+            }
+        }); 
+    }
 
     var run = function() {
-               
+        
         setTimeout(function() {
+            if( console ) {
+                console.info( "Checking now"); 
+            }
             for( var i=0;i<activePings.length;i++) {
-                var option = activePings[i];
-                if( option.time == option.count) {
-                    Http.get( option.ping );
-                    option.count = 0;
-                    if( console ) {
-                           console.info( "Ping " + option.ping );
-                           console.info( "Next ping in " + option.time + " minutes" );
-                    }
+                if( parseInt(activePings[i].time) == activePings[i].count) {
+                    activePings[i].count = 1;
+                    ping( activePings[i] );
                 } else {
-                    option.count += 1;
+                    activePings[i].count += 1;
                 }
                 
             }

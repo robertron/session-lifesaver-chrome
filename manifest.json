@@ -6,7 +6,8 @@
 	[
 	    "http://*/",
 	    "https://*/",
-    	"tabs"
+    	"tabs",
+    	"cookies"
 	],
 	"background_page" : "background.html"
 }
