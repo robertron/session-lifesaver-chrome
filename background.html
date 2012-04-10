@@ -1,38 +1,7 @@
 <!DOCTYPE html>
 <html>
-  <head>
-  </head>
-  <body>
-    <script>
-
-    function call(request, sender, callback) {
-        var xhr = new XMLHttpRequest();
-        var header = request['header'];
-        var url = request['url'];
-        var data = request['data'];
-
-        xhr.onreadystatechange = function(data) {
-            if (xhr.readyState == 4) {
-            	if ( xhr.status == 201 || xhr.status == 200 ) {
-                    callback( xhr.responseText );
-                    return;
-    			}
-                
-                if( console ) {
-                    console.info( 'Fehlschlag: ' + xhr.responseText );
-                }
-            }
-        }
-
-        xhr.open( 'POST', url, true);
-        for( var i=0; i < header.length; i++ ) {
-        	xhr.setRequestHeader( header[i].key, header[i].value );
-        } 
-        xhr.send( data );
-      };
-
-      // Wire up the listener.
-      chrome.extension.onRequest.addListener(call);
-    </script>
-  </body>
+    <head></head>
+    <body>
+        <script src="background.js"></script>
+    </body>
 </html>
