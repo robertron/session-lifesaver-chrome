@@ -1,0 +1,16 @@
+{
+  	"name": "Session Life Saver",
+  	"version": "0.1",
+  	"content_scripts": 
+  	[
+	    {
+	      "js": ["jquery-1.4.2.min.js","main.js"]
+	    }
+  	],
+    "permissions": 
+	[
+	    "http://*/",
+	    "https://*/"
+	],
+	"background_page" : "background.html"
+}
