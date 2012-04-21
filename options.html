@@ -33,9 +33,13 @@
             addOption(value.trigger, value.ping, value.time);
         }
     }
+    
+    function removeOption( val ) {
+        $(val).parent().parent().remove();
+    }
 
     function buildOptionLine(trigger, ping, time) {
-        return '<tr class="optionline"><td><input type="text" class="triggeroption" value="'+trigger+'"></input></td><td><input type="text" class="pingoption" value="'+ping+'"></input></td><td><input type="text" class="timeoption" value="'+time+'"></input></td></tr>';
+        return '<tr class="optionline"><td><input type="text" class="triggeroption" value="'+trigger+'"></input></td><td><input type="text" class="pingoption" value="'+ping+'"></input></td><td><input type="text" class="timeoption" value="'+time+'"></input></td><td><button onclick="removeOption(this);">Remove</button></tr>';
     }
 
     function addOption(trigger, ping, time) {
@@ -45,24 +49,36 @@
 
 <body onload="restoreOptions()">
 
+    <h2>Options</h2>
+
     <div>
         <span id="feedback"></span>
     </div>
-
-    <a href="#" onclick="addOption();">Add new option</a>
+    
+    <p>For a new entry you will need:
+        <br>
+        - url to listen for as trigger
+        <br>
+        - url to ping when the first url is found in a tab of your chrome window
+        <br>
+        - repeating interval in minutes
+    </p>
+     
 
     <table id="options">
         <tr>
-            <th>Url to listen for
-            </td>
-            <th>Url to ping
-            </td>
-            <th>Repeating interval in minutes
-            </td>
+            <th>URL (Trigger)
+            </th>
+            <th>Url (Ping)
+            </th>
+            <th>Repeating interval (minutes)
+            </th>
+            <th>
+            </th>
         </tr>
     </table>
 
     <br>
-    <button onclick="saveOptions()">Save</button>
+    <button onclick="addOption( '', '', '' );">Add new option</button> <button onclick="saveOptions()">Save</button> 
 </body>
 </html>
