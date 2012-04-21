@@ -1,46 +1,46 @@
 <html>
 <head>
-    <title>Session Life Saver Options</title>
-    <script src='jquery-1.4.2.min.js'></script>
+<title>Session Life Saver Options</title>
+<script src='jquery-1.4.2.min.js'></script>
 </head>
 <script type="text/javascript">
-	function saveOptions() {
-		var options = new Array();
-		$.each( $(".optionline"), function( index, value ) {
-			var option = {};
-			option.trigger = $( value ).find( '.triggeroption' ).val();
-			option.ping = $( value ).find( '.pingoption' ).val();
-			option.time = $( value ).find( '.timeoption' ).val();
-			options.push( option );
-		});
-	
-		localStorage["sessionlifesaver"] = JSON.stringify( options ); 
+    function saveOptions() {
+        var options = new Array();
+        $.each($(".optionline"), function(index, value) {
+            var option = {};
+            option.trigger = $(value).find('.triggeroption').val();
+            option.ping = $(value).find('.pingoption').val();
+            option.time = $(value).find('.timeoption').val();
+            options.push(option);
+        });
 
-		$( '#feedback' ).html( "Options Saved." );
-		setTimeout(function() {
-			$( '#feedback' ).html( "" );
-		}, 750);
-	}
+        localStorage["sessionlifesaver"] = JSON.stringify(options);
 
-	function restoreOptions() {
-		var options = JSON.parse( localStorage["sessionlifesaver"] );
-		if (!options) {
-			return;
-		}
-		
-		for( var i=0; i<options.length; i++ ) {
-			var value = options[i];
-			addOption( value.trigger, value.ping, value.time );
-		}
-	}
-	
-	function buildOptionLine( trigger, ping, time ) {
-		return '<tr class="optionline"><td><input type="text" class="triggeroption" value="'+trigger+'"></input></td><td><input type="text" class="pingoption" value="'+ping+'"></input></td><td><input type="text" class="timeoption" value="'+time+'"></input></td></tr>';
-	}
-	
-	function addOption( trigger, ping, time ) {
-		$( "#options" ).append( buildOptionLine( trigger, ping, time ) );
-	}
+        $('#feedback').html("Options Saved.");
+        setTimeout(function() {
+            $('#feedback').html("");
+        }, 750);
+    }
+
+    function restoreOptions() {
+        var options = JSON.parse(localStorage["sessionlifesaver"]);
+        if (!options) {
+            return;
+        }
+
+        for ( var i = 0; i < options.length; i++) {
+            var value = options[i];
+            addOption(value.trigger, value.ping, value.time);
+        }
+    }
+
+    function buildOptionLine(trigger, ping, time) {
+        return '<tr class="optionline"><td><input type="text" class="triggeroption" value="'+trigger+'"></input></td><td><input type="text" class="pingoption" value="'+ping+'"></input></td><td><input type="text" class="timeoption" value="'+time+'"></input></td></tr>';
+    }
+
+    function addOption(trigger, ping, time) {
+        $("#options").append(buildOptionLine(trigger, ping, time));
+    }
 </script>
 
 <body onload="restoreOptions()">
@@ -50,12 +50,15 @@
     </div>
 
     <a href="#" onclick="addOption();">Add new option</a>
-    
+
     <table id="options">
         <tr>
-            <th>Url to listen for</td>
-            <th>Url to ping</td>
-            <th>Repeating interval in minutes</td>
+            <th>Url to listen for
+            </td>
+            <th>Url to ping
+            </td>
+            <th>Repeating interval in minutes
+            </td>
         </tr>
     </table>
 
