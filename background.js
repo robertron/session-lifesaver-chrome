@@ -1,51 +1,6 @@
 /**
  * Background functions. Robert Breetzmann (robert.breetzmann@gmail.com)
  */
-var Http = new function() {
-    this.get = function(url, cookies, callback) {
-        var header = [ {
-            'key' : 'User-agent',
-            'value' : 'Mozilla/4.0 (compatible)'
-        } ];
-
-        var cookie = '';
-        for ( var i = 0; i < cookies.length; i++) {
-            cookie += cookies[i].name + "=" + cookies[i].value + ";";
-        }
-
-        header.push({
-            'key' : 'Cookie',
-            'value' : cookie
-        });
-
-        var request = {
-            'header' : header,
-            'url' : url
-        };
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function(data) {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 201 || xhr.status == 200) {
-                    if (callback) {
-                        callback(xhr.responseText);
-                    }
-                    return;
-                }
-
-                if (console) {
-                    console.info('Error:' + xhr.responseText);
-                }
-            }
-        }
-
-        xhr.open('GET', url, false);
-        for ( var i = 0; i < header.length; i++) {
-            xhr.setRequestHeader(header[i].key, header[i].value);
-        }
-        xhr.send();
-    }
-}
-
 var SessionLiveSaver = new function() {
 
     var activePings = new Array();
@@ -148,15 +103,11 @@ var SessionLiveSaver = new function() {
     }
 
     var ping = function(option) {
-        chrome.cookies.getAll({
-            url : option.ping
-        }, function(cookies) {
-            Http.get(option.ping, cookies);
-            if (console) {
-                console.info("Ping " + option.ping);
-                console.info("Next ping in " + option.time + " minutes");
-            }
-        });
+        $.get(option.ping);
+        if (console) {
+            console.info("Ping " + option.ping);
+            console.info("Next ping in " + option.time + " minutes");
+        }
     }
 
     var run = function() {
