@@ -30,7 +30,6 @@ var Options = new function() {
     }
     
     var removeOption = function( el ) {
-    	console.info(el);
         $(el).parent().parent().remove();
     }
 
